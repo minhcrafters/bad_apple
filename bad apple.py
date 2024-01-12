@@ -15,14 +15,13 @@ from ffmpeg import FFmpeg
 
 inp = "./assets/bad_apple.mp4"
 out = "frames"
+max_width = 64
+threshold = 255 * 0.4
 
 
 def frame_to_boxes(im: Image, name):
     w, h = im.size
     ratio = w / h
-
-    max_width = 64
-    threshold = 255 * 0.4
 
     im = im.convert("L")
     im = im.resize((max_width, int(max_width / ratio)))
@@ -104,14 +103,16 @@ def frame_to_boxes(im: Image, name):
         ]
         draw.rectangle(box, fill=next(fills))
 
-    tqdm.write(f"{len(boxes)=}")
+    # tqdm.write(f"{len(boxes)=}")
 
-    os.makedirs("./frames", exist_ok=True)
+    os.makedirs(f"./{out}", exist_ok=True)
 
     work.save(f"./{out}/{name}.png")
 
     return boxes
 
+
+print("Converting video to frames...")
 
 image_counter = 0
 
@@ -136,8 +137,6 @@ if not os.path.exists("./assets/bad_apple.ogg") and os.path.exists(
 
     ffmpeg.execute()
 
-print("Converting video to frames...")
-
 try:
     while cap.isOpened():
         ret, cv2_im = cap.read()
@@ -159,12 +158,12 @@ finally:
 # checks and such
 with open("./assets/boxes.json") as f:
     j = json.load(f)
-print(f"Most visible windows: {max(len(b) for b in j)}")
-print(f"Total frames: {len(j)}")
-print(f"Total window changes: {sum(len(b) for b in j)}")
-print(
-    f"Base width: {max(max((coords[0]+coords[2] for coords in b), default=0) for b in j)}\nBase height: {max(max((coords[1]+coords[3] for coords in b), default=0) for b in j)}"
-)
+    print(f"Most visible windows: {max(len(b) for b in j)}")
+    print(f"Total frames: {len(j)}")
+    print(f"Total window changes: {sum(len(b) for b in j)}")
+    print(
+        f"Base width: {max(max((coords[0]+coords[2] for coords in b), default=0) for b in j)}\nBase height: {max(max((coords[1]+coords[3] for coords in b), default=0) for b in j)}"
+    )
 
 print("Serialising box-o'-bytes to boxes.bin")
 with open("./assets/boxes.bin", "wb") as f:

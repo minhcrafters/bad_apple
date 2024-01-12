@@ -2,6 +2,8 @@
 target/
 frames/
 
+assets/boxes.*
+
 __pycache__/
 
 Cargo.lock
