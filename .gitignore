@@ -2,7 +2,7 @@
 target/
 frames/
 
-assets/boxes.*
+./assets/boxes.*
 
 __pycache__/
 
