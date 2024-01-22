@@ -2,7 +2,9 @@
 target/
 frames/
 
-./assets/boxes.*
+assets/
+lmao.py
+ok.py
 
 __pycache__/
 
